@@ -1,0 +1,4 @@
+1) How to fix all dependencies:  pip freeze > .\requirements_1.txt
+
+2) 15.04.2023 19:16
+openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.
