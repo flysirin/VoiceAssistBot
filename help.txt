@@ -2,3 +2,14 @@
 
 2) 15.04.2023 19:16
 openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.
+
+3) Передаем FFMPEG_BINARY в качестве первого аргумента команды subprocess.run(), а затем передаем остальные аргументы команды ffmpeg в виде списка command.
+
+# Запуск команды для конвертации аудио
+command = ["ffmpeg", "-i", "input.mp3", "output.wav"]
+subprocess.run(command, check=True)
+
+# Запуск команды для извлечения аудио из видео
+command = ["ffmpeg", "-i", "input.mp4", "-vn", "-acodec", "copy", "output.m4a"]
+subprocess.run(command, check=True)
+

@@ -3,7 +3,8 @@ from config_data import config
 from datetime import datetime
 
 openai.api_key = config.OPENAI_API_KEY_FROM_HRY
-def start_transcode():
+def start_audio_decode():
+    """Decode audio and save to txt file"""
     audio_file = open("tests/samples/output_audio.mp3", "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
 

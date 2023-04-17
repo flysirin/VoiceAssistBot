@@ -1,10 +1,12 @@
-from pydub import AudioSegment
-# from pydub import
-song = AudioSegment.from_mp3("good_morning.mp3")
+import subprocess
 
-# PyDub handles time in milliseconds
-ten_minutes = 10 * 60 * 1000
+FFMPEG_BINARY = r"C:\\python_projects\\Education\\VoiceAssistBot\\ffmpeg.exe"
+input_file = r"C:\\python_projects\\Education\\VoiceAssistBot\\tests\\samples\\input.wav"
+# output_file = r"../tests/samples/output.ogg"
 
-first_10_minutes = song[:ten_minutes]
+# command = [FFMPEG_BINARY, '-i', input_file, output_file]
 
-first_10_minutes.export("good_morning_10.mp3", format="mp3")
+command = [FFMPEG_BINARY, '-i', input_file, '-af', 'silencedetect=noise=-50dB:d=0.5', '-f', 'null', '-', '2>', 'output.txt']
+
+with open('output.txt', 'w') as f:
+    subprocess.run(command, check=True, stderr=f)
