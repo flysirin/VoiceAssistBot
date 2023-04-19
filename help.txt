@@ -4,17 +4,18 @@
 openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.
 
 3) 16.04.2023
-Передаем FFMPEG_BINARY в качестве первого аргумента команды subprocess.run(), а затем передаем остальные аргументы команды ffmpeg в виде списка command.
+We pass FFMPEG_BINARY as the first argument to the subprocess.run() command, and then we pass
+the rest of the ffmpeg command arguments as a command list.
 
-# Запуск команды для конвертации аудио
+Run command to convert audio
 command = ["ffmpeg", "-i", "input.mp3", "output.wav"]
 subprocess.run(command, check=True)
 
-# Запуск команды для извлечения аудио из видео
+Running a command to extract audio from a video
 command = ["ffmpeg", "-i", "input.mp4", "-vn", "-acodec", "copy", "output.m4a"]
 subprocess.run(command, check=True)
 
-4) 18.04.2013
+4) 18.04.2023
 async def send_echo(message: Message, bot: Bot):
     try:
         file_id = message.voice.file_id if message.voice else message.audio.file_id
@@ -23,6 +24,18 @@ async def send_echo(message: Message, bot: Bot):
         file_path = file.file_path
         await bot.download_file(file_path, "some_file.mp3")
 
-async def send_echo(message: Message, bot: Bot): - не явно фреймворк передает бота в хендлер. Таким образом можно
-использовать методы бота.
-Удалось сохранить переданные аудиофайлы на диск
+async def send_echo(message: Message, bot: Bot): - implicitly, the framework passes the bot to the handler.
+Thus it is possible use bot methods. Saved transferred audio files to disk
+
+5) 19.04.2023
+ADD second version func for download sound with read binaryIO and save to bytes in memory
+async def process_download_audio(message: Message, bot: Bot):
+
+Finish create func "convert_audio_to_mp3" and upgrade handler "process_audio_to_text"
+
+To speed up the speed of audio playback in the FFmpeg command, you can use the "-filter:a" option
+and specify "atempo" filter with speed factor ["-filter:a", f"atempo={speed}"], for example speed=1.5
+
+Set a different bitrate, you can add the option "-b:a" (or "-ab") specifying the desired bitrate in kilobits per second
+["-b:a", "192k"]
+

@@ -1,6 +1,6 @@
 import subprocess
 
-FFMPEG_BINARY = r"C:\\python_projects\\Education\\VoiceAssistBot\\ffmpeg.exe"
+FFMPEG_BINARY = r"ffmpeg.exe"
 input_file = r"C:\\python_projects\\Education\\VoiceAssistBot\\tests\\samples\\input.wav"
 # output_file = r"../tests/samples/output.ogg"
 
