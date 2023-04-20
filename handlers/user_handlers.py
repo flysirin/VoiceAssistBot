@@ -4,7 +4,8 @@ from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from lexicon.lexicon import LEXICON
-from services import convert_audio
+from services import convert_audio, ai_service
+from aiogram.types.input_file import FSInputFile
 
 # Initialise router by module level
 router: Router = Router()
@@ -34,7 +35,7 @@ async def process_help_command(message: Message):
 #         await message.reply(text=f"Exception...\n {e}")
 
 
-# Second version func for download sound with read binary
+# Second version func for download sound with read binary and convert to text
 @router.message(F.voice | F.audio)
 async def process_audio_to_text(message: Message, bot: Bot):
     try:
@@ -49,8 +50,14 @@ async def process_audio_to_text(message: Message, bot: Bot):
 
         path_for_convert = f"tests/load_files/{file_name}"
         path_output = convert_audio.convert_audio_to_mp3(file_name=file_name, path_input=path_for_convert)
-
         await message.reply(text=f"Success convert to mp3: \n{path_output}")
+
+        text_path = ai_service.transcribe_audio_to_text(path_output, file_name)
+        # await message.reply(text=f"Success convert to txt file: \n {text_path}")
+
+        send_doc = FSInputFile(text_path)
+        await message.answer_document(send_doc)
+
     except BaseException as e:
         await message.reply(text=f"Exception: \n{e}")
 

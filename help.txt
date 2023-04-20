@@ -39,3 +39,33 @@ and specify "atempo" filter with speed factor ["-filter:a", f"atempo={speed}"], 
 Set a different bitrate, you can add the option "-b:a" (or "-ab") specifying the desired bitrate in kilobits per second
 ["-b:a", "192k"]
 
+6) 20.04.2023
+command = [FFMPEG_BINARY, "-i", "pipe:", "-b:a", "33k", "-filter:a", f"atempo={speed}", "pipe:"]
+in the command parameters, we replaced path_input and path_output with "pipe:", which indicates input and output data
+via stdin and stdout. We pass data to stdin via input and get the result via a BytesIO object to stdout.
+result = output_data
+
+Using subprocess.PIPE is a common approach when working with subprocesses, as it allows you to
+capture the output of the subprocess in a way that is compatible with any platform or operating system.
+
+By default, the run function returns the result of the command to the standard output stream. If you want to get the result of the command, you need to add the stdout argument and set it to subprocess.PIPE:
+In [9]: result = subprocess.run(['ls', '-ls'], stdout=subprocess.PIPE)
+Now you can get the result of running the command like this:
+In [10]: print(result.stdout)
+
+
+In order to send a file, a special FSInputFile wrapper is used in aiogram for local files:
+from aiogram.types.input_file import FSInputFile
+document = FSInputFile('otchet.txt')
+await bot.send_document(chatid, document)
+
+
+Create func for text request to Open_AI:
+def text_request_to_open_ai(text: str = "Hello!"):
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": f" 'Some specific param.': {text}"}])
+    return completion.choices[0].message["content"]
+
+
+Convert function now supports binary input and output
