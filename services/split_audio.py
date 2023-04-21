@@ -1,12 +1,12 @@
 import subprocess
+from config_data.config import FFMPEG_BINARY
 
-FFMPEG_BINARY = r"ffmpeg.exe"
-input_file = r"C:\\python_projects\\Education\\VoiceAssistBot\\tests\\samples\\input.wav"
-# output_file = r"../tests/samples/output.ogg"
 
-# command = [FFMPEG_BINARY, '-i', input_file, output_file]
+input_file = f"../tests/load_files/s8aw5ohnix1r1o7jq8.m4a"
 
 command = [FFMPEG_BINARY, '-i', input_file, '-af', 'silencedetect=noise=-50dB:d=0.5', '-f', 'null', '-', '2>', 'output.txt']
 
 with open('output.txt', 'w') as f:
     subprocess.run(command, check=True, stderr=f)
+
+

@@ -48,7 +48,8 @@ result = output_data
 Using subprocess.PIPE is a common approach when working with subprocesses, as it allows you to
 capture the output of the subprocess in a way that is compatible with any platform or operating system.
 
-By default, the run function returns the result of the command to the standard output stream. If you want to get the result of the command, you need to add the stdout argument and set it to subprocess.PIPE:
+By default, the run function returns the result of the command to the standard output stream.
+If you want to get the result of the command, you need to add the stdout argument and set it to subprocess.PIPE:
 In [9]: result = subprocess.run(['ls', '-ls'], stdout=subprocess.PIPE)
 Now you can get the result of running the command like this:
 In [10]: print(result.stdout)
@@ -69,3 +70,27 @@ def text_request_to_open_ai(text: str = "Hello!"):
 
 
 Convert function now supports binary input and output
+
+7) 21.04.2023
+change func "transcribe_audio_to_text"
+transcript = openai.Audio.transcribe_raw("whisper-1", file_bytes, "some_file.mp3")
+If we want get to AI raw bytes
+
+Create func for delete temp files
+delete_temp_files(path: str = "temp")
+
+Now func "convert_audio_to_mp3" work correct with "aac" format and return "bytes"
+
+Create "temp" folder. Now all temp files to delete at the end
+
+Add delete alert message after successful transcribe
+
+Add path for ffmpeg in config.py
+
+
+The first line ignores all files and folders in the project's root directory, except for the .gitignore file,
+ so that this file is included in Git. The second line includes the "tmp" folder in the Git version control system.
+  This way, if you create an empty "tmp" folder in your project's root directory, it will be included in Git.
+/*
+!/.gitignore
+!/tmp/
