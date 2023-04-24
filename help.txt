@@ -115,3 +115,14 @@ create function for split text for correct send message
 import textwrap
 def split_text(text: str, max_length: int = 4000):
     wrapped_text = textwrap.wrap(text=text, width=max_length, break_long_words=False)
+
+add default param speed in func
+try fix bug cycle request after press Inline Button on iphone
+
+change func 'convert_audio_to_mp3' - add param 'speed' for convert., now func take bytes for bytes IO place
+
+
+Add catch     "except openai.error.InvalidRequestError as e:
+        if "Invalid file format" in str(e):"
+Now Bot try decode file second time if open IA do not read file after decoding.
+
