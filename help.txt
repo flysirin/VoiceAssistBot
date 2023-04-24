@@ -94,3 +94,24 @@ The first line ignores all files and folders in the project's root directory, ex
 /*
 !/.gitignore
 !/tmp/
+
+8) 24.04.2023
+moved func delete_files to other_services and upgrade func convert_audio_to_mp3
+
+Function button_read_text_press now work correct and open big text message
+file = callback.message.document
+    file_bytes_io = await bot.download(file)
+    text_str = file_bytes_io.read().decode('utf-8')
+
+    split_text = other_services.split_text(text_str)
+    for chunk_text in split_text:
+        await callback.message.answer(text=chunk_text)
+
+Add info about Bot functions
+
+Moved function delete_temp to /services/other_services and
+create function for split text for correct send message
+
+import textwrap
+def split_text(text: str, max_length: int = 4000):
+    wrapped_text = textwrap.wrap(text=text, width=max_length, break_long_words=False)
