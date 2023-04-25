@@ -126,3 +126,10 @@ Add catch     "except openai.error.InvalidRequestError as e:
         if "Invalid file format" in str(e):"
 Now Bot try decode file second time if open IA do not read file after decoding.
 
+9) 26.04.2023
+Added file type check to try to send AI directly and download size check
+for bots limit save files is 20Mb, download - 50Mb
+
+apdate function transribe_audio_to_text, add new features
+
+apdate lexicon
