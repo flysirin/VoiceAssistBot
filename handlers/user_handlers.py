@@ -1,4 +1,3 @@
-import asyncio
 import subprocess
 
 from aiogram import Router, F, Bot
@@ -10,8 +9,8 @@ from aiogram.types.input_file import FSInputFile
 
 from keyboards import keyboards
 
-from config_data import config
 from random import choice
+
 # Initialise router by module level
 router: Router = Router()
 
@@ -43,10 +42,7 @@ async def process_audio_to_text(message: Message, bot: Bot):
             text=f"File downloaded successfully: \n{file_name}\n Text decoding in progress",
             disable_notification=True)
 
-        if file.file_size > 25e6 or file_name.split(".")[-1] not in ['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav',
-                                                                     'webm']:
-            sound_bytes = convert_audio.convert_audio_to_mp3(file_bytes=sound_bytes, file_name=file_name)
-
+        sound_bytes = convert_audio.convert_audio_to_mp3(file_bytes=sound_bytes, file_name=file_name)
         text_path = ai_service.transcribe_audio_to_text(sound_bytes, file_name)
         send_doc = FSInputFile(text_path)
 
@@ -66,7 +62,7 @@ async def process_audio_to_text(message: Message, bot: Bot):
 
 
 @router.callback_query(Text(text=['read_text_button_pressed']))
-async def button_read_text_press(callback: CallbackQuery, bot: Bot):
+async def process_read_text_press(callback: CallbackQuery, bot: Bot):
     await callback.answer()
 
     file = callback.message.document
@@ -83,6 +79,25 @@ async def button_read_text_press(callback: CallbackQuery, bot: Bot):
 @router.message(F.video)
 async def this_is_video(message: Message, bot: Bot):
     await message.reply(text=f"file video size: {message.video.file_size}")
-    file = await bot.download(message.video)
-    with open("tests/file.v", "wb") as f:
-        f.write(file.read())
+    # file = await bot.download(message.video)
+    # with open("tests/file.v", "wb") as f:
+    #     f.write(file.read())
+
+
+@router.message(F.text)
+async def process_send_text_request_to_open_ai(message: Message, bot: Bot):
+    answer = ai_service.text_request_to_open_ai(text=message.text)
+    await message.reply(text=answer)
+
+
+@router.callback_query(Text(text=['send_text_open_ai']))
+async def process_send_text_request_open_ai(callback: CallbackQuery, bot: Bot):
+    await callback.answer()
+
+    file = callback.message.document
+    file_bytes_io = await bot.download(file)
+    text_str = file_bytes_io.read().decode('utf-8')
+    answer = ai_service.text_request_to_open_ai(text=text_str)
+
+    await callback.message.answer(text=answer)
+
