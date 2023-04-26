@@ -1,9 +1,8 @@
-import io
 import openai
 from config_data import config
-from datetime import datetime
 from services import convert_audio
 
+from time import sleep
 openai.api_key = config.OPENAI_API_KEY_FROM_HRY
 
 
@@ -35,14 +34,19 @@ def transcribe_audio_to_text(file_bytes: bytes = None,
         return send_request(file_bytes, file_name)
 
 
-def text_request_to_open_ai(text: str = "Hello!") -> str:
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": f"Краткое содержание этого текста {text}"}
-        ]
-    )
-    return completion.choices[0].message["content"]
+def text_request_to_open_ai(text: str = "Say me something good!") -> str:
+    def send_request():
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": f"{text}"}])
+        return completion.choices[0].message["content"]
+
+    try:
+        return send_request()
+
+    except openai.error.APIConnectionError:
+        sleep(2)
+        return send_request()
 
 # text_file = f"../tests/load_files/19537079.txt"
 # with open(text_file, "r", encoding="utf-8") as f:
