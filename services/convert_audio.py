@@ -1,4 +1,3 @@
-import io
 import subprocess
 from config_data.config import FFMPEG_BINARY
 
@@ -23,6 +22,5 @@ def convert_audio_to_mp3(file_bytes: bytes = None,
     if file_bytes:
         command = [FFMPEG_BINARY, "-i", "pipe:", "-b:a", bitrate,
                    "-filter:a", f"atempo={speed}", "-f", "mp3", "pipe:"]
-        # file_bytes = file_bytes_io  # Read BytesIO obj
         output_data = subprocess.run(command, input=file_bytes, stdout=subprocess.PIPE, check=True)
         return output_data.stdout
