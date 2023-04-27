@@ -1,6 +1,8 @@
 import subprocess
-from config_data.config import FFMPEG_BINARY
+from config_data.config import FFMPEG_BINARY_WINDOWS, FFMPEG_BINARY_LINUX
 
+
+FFMPEG_BINARY = FFMPEG_BINARY_WINDOWS
 
 input_file = f"../tests/load_files/s8aw5ohnix1r1o7jq8.m4a"
 
