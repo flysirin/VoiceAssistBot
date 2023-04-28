@@ -144,3 +144,57 @@ Add callback_query handler for answer from first button to send text open ai
 
 Now you can send a question to the GPT 3.5 chat after transcribing the voice at the touch of a button
 
+
+11) 28.04.2023
+
+Тест бота без библиотеки Open_AI.
+Шаг первый - создаем с нуля функцию декодирования аудио в текст.
+
+curl.exe --request POST --url https://api.openai.com/v1/audio/transcriptions --header 'Authorization: Bearer sk-Token' --header 'Content-Type: multipart/form-data' --form file=@48655.mp3 --form model=whisper-1
+Так можно запустить в командной строке win
+
+Если вам нужно передать команду в виде одной строки, вы можете заключить параметры, содержащие пробелы, в двойные кавычки, аргументы, содержащие двойные кавычки, экранировать обратным слешем:
+
+curl_command = 'curl.exe --request POST' \
+               ' --url https://api.openai.com/v1/audio/transcriptions' \
+               ' --header "Authorization: Bearer sk-Token1"' \
+               ' --header "Content-Type: multipart/form-data"' \
+               ' --form "file=@48655.mp3"' \
+               ' --form "model=whisper-1"' \
+               ' --form "response_format=text"'
+
+Здесь параметры Authorization и Content-Type заключены в двойные кавычки, чтобы обеспечить правильную интерпретацию
+значений параметров, содержащих пробелы. Параметр file содержит символ @ в начале, чтобы указать имя файла,
+который необходимо отправить вместе с запросом.
+
+Намного проще передать параметры в виде списка:
+
+curl_command = ['curl.exe', '--request', 'POST',
+                '--url', 'https://api.openai.com/v1/audio/transcriptions',
+                '--header', 'Authorization: Bearer sk-Token1',
+                '--header', 'Content-Type: multipart/form-data',
+                '--form', 'file=@48655.mp3',
+                '--form', 'model=whisper-1',
+                '--form', 'response_format=text']
+
+
+Для загрузки байтов файла через stdin, "file=@-;filename=q.mp3" - filename - обязательный параметр
+curl_command = 'curl.exe --request POST' \
+               ' --url https://api.openai.com/v1/audio/transcriptions' \
+               ' --header "Authorization: Bearer sk-Token123"' \
+               ' --header "Content-Type: multipart/form-data"' \
+               ' --form "file=@-;filename=q.mp3"' \
+               ' --form "model=whisper-1"' \
+               ' --form "response_format=text"'
+
+curl_command = ['curl.exe', '--request', 'POST',
+                    '--url', f'{TRANSCRIPTIONS_URL}',
+                    '--header', f'Authorization: Bearer {OPENAI_API_KEY_FROM_HRY}',
+                    '--header', 'Content-Type: multipart/form-data',
+                    '--form', f'file=@-;filename=file_name.mp3',
+                    '--form', f'model={model}']
+
+Для функции transcribe_audio_to_text параметр --form "response_format=text" пришлось убрать, чтобы получать json файл
+с возможными ошибками от open AI.
+
+Добавил Dockerfile. Успешно собрал работоспособный образ на базе python:3.10.11-alpine3.17
