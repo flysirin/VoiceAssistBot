@@ -1,6 +1,3 @@
-
-/services/ffmpeg_windows
-
 .git
 .idea
 .gitignore
@@ -11,9 +8,21 @@ __pycache__/
 
 /tests
 
+help.txt
 help_tests.py
+
 services/ffmpeg_windows
+services/ai_service_requests.py
+services/ai_service.py
+services/split_audio.py
+
+
+handlers/admin_handlers.py
+handlers/other_handlers.py
+handlers/private_user_handlers.py
+
 requirements_all.txt
+requirements.txt
 
 
 
