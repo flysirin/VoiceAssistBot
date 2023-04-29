@@ -147,14 +147,14 @@ Now you can send a question to the GPT 3.5 chat after transcribing the voice at 
 
 11) 28.04.2023
 
-Тест бота без библиотеки Open_AI.
-Шаг первый - создаем с нуля функцию декодирования аудио в текст.
+Bot test without Open_AI library.
+Step one - create from scratch the function of decoding audio to text.
 
 curl.exe --request POST --url https://api.openai.com/v1/audio/transcriptions --header 'Authorization: Bearer sk-Token' --header 'Content-Type: multipart/form-data' --form file=@48655.mp3 --form model=whisper-1
-Так можно запустить в командной строке win
+So you can run in the command line win
 
-Если вам нужно передать команду в виде одной строки, вы можете заключить параметры, содержащие пробелы, в двойные кавычки, аргументы, содержащие двойные кавычки, экранировать обратным слешем:
-
+If you need to pass the command as a single line, you can enclose parameters containing spaces in double quotes,
+ arguments containing double quotes escape with a backslash:
 curl_command = 'curl.exe --request POST' \
                ' --url https://api.openai.com/v1/audio/transcriptions' \
                ' --header "Authorization: Bearer sk-Token1"' \
@@ -163,11 +163,11 @@ curl_command = 'curl.exe --request POST' \
                ' --form "model=whisper-1"' \
                ' --form "response_format=text"'
 
-Здесь параметры Authorization и Content-Type заключены в двойные кавычки, чтобы обеспечить правильную интерпретацию
-значений параметров, содержащих пробелы. Параметр file содержит символ @ в начале, чтобы указать имя файла,
-который необходимо отправить вместе с запросом.
+Here the Authorization and Content-Type parameters are enclosed in double quotes to ensure proper interpretation
+parameter values containing spaces. The file parameter contains an @ symbol at the beginning to indicate the file name,
+to be sent along with the request.
 
-Намного проще передать параметры в виде списка:
+It's much easier to pass parameters as a list:
 
 curl_command = ['curl.exe', '--request', 'POST',
                 '--url', 'https://api.openai.com/v1/audio/transcriptions',
@@ -185,7 +185,7 @@ curl_command = 'curl.exe --request POST' \
                ' --header "Content-Type: multipart/form-data"' \
                ' --form "file=@-;filename=q.mp3"' \
                ' --form "model=whisper-1"' \
-               ' --form "response_format=text"'
+               ' --.form "response_format=text"'
 
 curl_command = ['curl.exe', '--request', 'POST',
                     '--url', f'{TRANSCRIPTIONS_URL}',
@@ -194,7 +194,27 @@ curl_command = ['curl.exe', '--request', 'POST',
                     '--form', f'file=@-;filename=file_name.mp3',
                     '--form', f'model={model}']
 
-Для функции transcribe_audio_to_text параметр --form "response_format=text" пришлось убрать, чтобы получать json файл
-с возможными ошибками от open AI.
+For the transcribe_audio_to_text function, the --form parameter "response_format=text" had to be removed in order to receive a json file
+with possible errors from open AI.
 
-Добавил Dockerfile. Успешно собрал работоспособный образ на базе python:3.10.11-alpine3.17
+Added Dockerfile. Successfully built a working image based on python:3.10.11-alpine3.17
+
+12) 29.04.2023
+Some of the other possible values for the "message" field in the Open AI error object might include:
+"Model 'model_name' not found": The specified model was not found in the system.
+"Request timed out": The request timed out.
+"API rate limit exceeded": You have exceeded the limit on the number of requests per unit of time.
+"Internal server error": An internal server error has occurred.
+"Invalid API key": The provided API key is invalid or does not exist.
+"Invalid request format": The request was worded incorrectly or contains invalid parameters.
+"Unauthorized API key": The provided API key does not have sufficient rights to make this request.
+"Insufficient credits": You do not have enough credits to complete this request.
+"Model 'model_name' is currently being fine-tuned and is not available for use": The specified model is currently being trained and is not available for use.
+Update lexicon.py
+
+Added a module for sending requests only with curl
+
+Add working Dockerfile_curl_build for build bot with curl requests
+
+Successfully built an image and tested it without the openAI library.
+For Alpine and other libraries, you need to install curl - RUN apk add --no-cache curl
