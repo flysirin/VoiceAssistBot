@@ -2,7 +2,7 @@ import subprocess
 from logging import debug, info
 import json
 from services import convert_audio
-from config_data.config import OPENAI_API_KEY_FROM_HRY
+from config_data.config import OPENAI_API_KEY
 from lexicon.lexicon import LEXICON
 from random import choice
 
@@ -58,7 +58,7 @@ def curl_post_request_sound_transcribe(sound_bytes: bytes = None,
                                        model="whisper-1") -> dict:
     curl_command = ['curl', '--request', 'POST',
                     '--url', f'{TRANSCRIPTIONS_URL}',
-                    '--header', f'Authorization: Bearer {OPENAI_API_KEY_FROM_HRY}',
+                    '--header', f'Authorization: Bearer {OPENAI_API_KEY}',
                     '--header', 'Content-Type: multipart/form-data',
                     '--form', f'file=@-;filename=file_name.mp3',
                     '--form', f'model={model}']
@@ -90,7 +90,7 @@ def curl_post_text_request(text, model="gpt-3.5-turbo", temperature: float = 1) 
     curl_command = ['curl', '--request', 'POST',
                     '--url', f'{CHAT_URL}',
                     '-H', "Content-Type: application/json",
-                    '-H', f'Authorization: Bearer {OPENAI_API_KEY_FROM_HRY}',
+                    '-H', f'Authorization: Bearer {OPENAI_API_KEY}',
                     '-d', f'{data}']
 
     result = subprocess.run(curl_command, stdout=subprocess.PIPE, check=True)
