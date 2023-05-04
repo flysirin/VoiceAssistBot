@@ -10,4 +10,6 @@ COPY ./ /app
 
 WORKDIR /app
 
+RUN chmod +x ffmpeg
+
 CMD ["python3", "bot.py"]
