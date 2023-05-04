@@ -5,9 +5,9 @@ env.read_env()
 
 OPENAI_API_KEY = env("OPENAI_API_KEY")
 BOT_TOKEN = env("BOT_TOKEN")
-OPENAI_API_KEY_FROM_HRY = env("OPENAI_API_KEY_FROM_HRY")
 ADMIN_IDS = env("ADMIN_IDS")
 
 
-FFMPEG_BINARY = f"services/ffmpeg.exe"
+FFMPEG_BINARY_WINDOWS = f"services/ffmpeg_windows/ffmpeg.exe"
+FFMPEG_BINARY_LINUX = f"services/ffmpeg_linux/ffmpeg"
 
