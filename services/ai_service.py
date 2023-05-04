@@ -3,13 +3,12 @@ from config_data import config
 from services import convert_audio
 
 from time import sleep
-openai.api_key = config.OPENAI_API_KEY_FROM_HRY
+openai.api_key = config.OPENAI_API_KEY
 
 
 def transcribe_audio_to_text(file_bytes: bytes = None,
                              file_name: str = 'default_name',
                              path: str = None) -> str:
-    """Decode audio and save to txt file"""
 
     path_save_txt = f"temp/{file_name.split('.')[0]}.txt"
     if path and not file_bytes:
@@ -47,7 +46,3 @@ def text_request_to_open_ai(text: str = "Say me something good!") -> str:
     except openai.error.APIConnectionError:
         sleep(2)
         return send_request()
-
-# text_file = f"../tests/load_files/19537079.txt"
-# with open(text_file, "r", encoding="utf-8") as f:
-#     print(text_request_to_open_ai(f.read()))
