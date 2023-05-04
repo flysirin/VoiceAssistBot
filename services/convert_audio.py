@@ -2,6 +2,7 @@ import subprocess
 from config_data.config import FFMPEG_BINARY_WINDOWS, FFMPEG_BINARY_LINUX
 
 FFMPEG_BINARY = FFMPEG_BINARY_LINUX
+# FFMPEG_BINARY = FFMPEG_BINARY_WINDOWS
 
 
 def convert_audio_to_mp3(file_bytes: bytes = None,
