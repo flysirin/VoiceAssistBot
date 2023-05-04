@@ -9,7 +9,6 @@ __pycache__/
 
 /tests
 
-help.txt
 help_tests.py
 
 services/ffmpeg_windows
@@ -22,8 +21,11 @@ handlers/admin_handlers.py
 handlers/other_handlers.py
 handlers/private_user_handlers.py
 
-requirements_all.txt
 requirements.txt
+
+My_diary_Voice_Assist_bot.txt
+Container Registry Help.txt
+
 
 
 
