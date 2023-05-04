@@ -4,7 +4,7 @@ from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart, Text
 from aiogram.types import Message, CallbackQuery
 from lexicon.lexicon import LEXICON
-from services import convert_audio, ai_service, other_services
+from services import convert_audio, other_services, ai_service_curl   #, ai_service
 from aiogram.types.input_file import FSInputFile
 
 from keyboards import keyboards
@@ -25,8 +25,6 @@ async def process_help_command(message: Message):
     await message.answer(text=LEXICON['/help'])
 
 
-# Second version func for download sound with read binary and convert to text
-# @router.callback_query(lambda c: True)
 @router.message(F.voice | F.audio)
 async def process_audio_to_text(message: Message, bot: Bot):
     try:
@@ -43,7 +41,7 @@ async def process_audio_to_text(message: Message, bot: Bot):
             disable_notification=True)
 
         sound_bytes = convert_audio.convert_audio_to_mp3(file_bytes=sound_bytes, file_name=file_name)
-        text_path = ai_service.transcribe_audio_to_text(sound_bytes, file_name)
+        text_path = ai_service_curl.transcribe_audio_to_text(sound_bytes, file_name)
         send_doc = FSInputFile(text_path)
 
         await bot.delete_message(message.chat.id, answer_message.message_id)
@@ -86,7 +84,7 @@ async def this_is_video(message: Message, bot: Bot):
 
 @router.message(F.text)
 async def process_send_text_request_to_open_ai(message: Message, bot: Bot):
-    answer = ai_service.text_request_to_open_ai(text=message.text)
+    answer = ai_service_curl.text_request_to_open_ai(text=message.text)
     await message.reply(text=answer)
 
 
@@ -97,7 +95,7 @@ async def process_send_text_request_open_ai(callback: CallbackQuery, bot: Bot):
     file = callback.message.document
     file_bytes_io = await bot.download(file)
     text_str = file_bytes_io.read().decode('utf-8')
-    answer = ai_service.text_request_to_open_ai(text=text_str)
+    answer = ai_service_curl.text_request_to_open_ai(text=text_str)
 
     await callback.message.answer(text=answer)
 
