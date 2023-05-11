@@ -12,6 +12,6 @@ WORKDIR /app
 
 RUN chmod +x /app/services/ffmpeg_linux/ffmpeg
 
-EXPLOSE 80
+EXPOSE 8080
 
-CMD ["python3", "bot.py"]
+CMD ["python3","-m", "http.server", "8080"]
