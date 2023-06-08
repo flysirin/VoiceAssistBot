@@ -1,54 +1,32 @@
-from aiogram import Dispatcher, Bot, types, filters, F
-from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command, CommandStart, Text
-from config_data.config import BOT_TOKEN
+from aiogram import Dispatcher, Bot
+from config_data.config import BOT_TOKEN, WEBHOOK_URL
+from handlers import user_handlers  # , other_handlers
 
-
+import logging
 from aiohttp import web
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 bot = Bot(token=BOT_TOKEN)
-
 Bot.set_current(bot)
 
 dp = Dispatcher()
 app = web.Application()
 
 webhook_path = f'/{BOT_TOKEN}'
+webhook_url = f'{WEBHOOK_URL}{webhook_path}'
+
+# Register routers in Dispatcher
+dp.include_router(user_handlers.router)
 
 
 async def set_webhook():
-    webhook_uri = f'https://5482-212-58-114-216.eu.ngrok.io{webhook_path}'
-    await bot.set_webhook(webhook_uri)
+    await bot.set_webhook(webhook_url)
 
 
 async def on_startup(_):
     await set_webhook()
-
-
-@dp.message(CommandStart())
-async def command_start_help(message: types.Message) -> None:
-    await message.answer(text='Hello Human🤖🌿℃')
-
-
-@dp.message(F.text)
-async def audio(message: types.Message) -> None:
-    await message.answer(text="La La Text 🕋")
-
-
-@dp.message(F.voice)
-async def audio(message: types.Message) -> None:
-    await message.answer(text="La La Voice 🕋")
-
-
-@dp.message(F.audio)
-async def audio(message: Message) -> None:
-    await message.answer(text="La La Audio 🕋")
-
-
-@dp.message(F.document)
-async def audio(message: types.Message) -> None:
-    await message.answer(text="La La Document 🕋")
 
 
 async def handle_webhook(request):
@@ -58,23 +36,25 @@ async def handle_webhook(request):
 
     if token == BOT_TOKEN:
         request_data = await request.json()
-        # update = types.Update(**request_data)
 
         await dp.feed_raw_update(bot, request_data)  # Main entry point for incoming updates with automatic Dict
+        logger.info(request_data)
 
-        print(request_data)
         return web.Response()
     else:
         web.Response(status=403)
 
 
-app.router.add_post(f'/{BOT_TOKEN}', handle_webhook)  # Shortcut for add_route with method POST
+app.router.add_post(webhook_path, handle_webhook)  # Shortcut for add_route with method POST
 
 if __name__ == '__main__':
     app.on_startup.append(on_startup)
+    logger.info("Start Bot")
 
     web.run_app(
         app,
         host='0.0.0.0',
         port=8080,
     )
+
+    logger.error('END BOT')
