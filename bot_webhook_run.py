@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Dispatcher, Bot
 from config_data.config import BOT_TOKEN, WEBHOOK_URL
 from handlers import user_handlers  # , other_handlers
@@ -5,7 +7,7 @@ from handlers import user_handlers  # , other_handlers
 import logging
 from aiohttp import web
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 bot = Bot(token=BOT_TOKEN)
@@ -22,7 +24,7 @@ dp.include_router(user_handlers.router)
 
 
 async def set_webhook():
-    await bot.set_webhook(webhook_url)
+    await bot.set_webhook(webhook_url, drop_pending_updates=True)
 
 
 async def on_startup(_):
@@ -36,9 +38,15 @@ async def handle_webhook(request):
 
     if token == BOT_TOKEN:
         request_data = await request.json()
+        logger.warning(request_data)
+        # web.Response()
+        # web.Response()
+        # web.Response()
 
-        await dp.feed_raw_update(bot, request_data)  # Main entry point for incoming updates with automatic Dict
-        logger.info(request_data)
+        # await dp.feed_raw_update(bot, request_data)  # Main entry point for incoming updates with automatic Dict
+
+        # Start processing in the background mode, not block main process
+        asyncio.create_task(dp.feed_raw_update(bot, request_data))
 
         return web.Response()
     else:
@@ -49,7 +57,7 @@ app.router.add_post(webhook_path, handle_webhook)  # Shortcut for add_route with
 
 if __name__ == '__main__':
     app.on_startup.append(on_startup)
-    logger.info("Start Bot")
+    logger.warning("Start Bot")
 
     web.run_app(
         app,
