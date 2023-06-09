@@ -25,11 +25,23 @@ async def process_help_command(message: Message):
     await message.answer(text=LEXICON['/help'])
 
 
-@router.message(F.voice | F.audio)
+@router.message(F.voice | F.audio | F.document)
 async def process_audio_to_text(message: Message, bot: Bot):
     try:
-        file = message.voice if message.voice else message.audio
-        file_name = f"{message.voice.file_unique_id}.ogg" if message.voice else message.audio.file_name
+        # if message.document:
+
+        file = message.voice or message.audio or message.document
+
+        if message.voice:
+            file_name = f"{message.voice.file_unique_id}.ogg"
+        elif message.audio:
+            file_name = message.audio.file_name
+        elif message.document and message.document.mime_type.split('/')[0] == 'audio':
+            file_name = message.document.file_name
+        else:
+            return await message.reply(
+                text=f"This is not a sound file")
+
         if file.file_size > 20.8e6:
             return await message.reply(
                 text=f"Sound file is too big. \nPlease use files less then 20Mb")
