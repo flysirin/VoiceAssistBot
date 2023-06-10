@@ -1,8 +1,8 @@
 import subprocess
 from config_data.config import FFMPEG_BINARY_WINDOWS, FFMPEG_BINARY_LINUX
 
-FFMPEG_BINARY = FFMPEG_BINARY_LINUX
-# FFMPEG_BINARY = FFMPEG_BINARY_WINDOWS
+# FFMPEG_BINARY = FFMPEG_BINARY_LINUX
+FFMPEG_BINARY = FFMPEG_BINARY_WINDOWS
 
 
 def convert_audio_to_mp3(file_bytes: bytes = None,
@@ -11,7 +11,7 @@ def convert_audio_to_mp3(file_bytes: bytes = None,
                          speed=1.4) -> bytes | None:
     bitrate = "33k"
 
-    if path_input or file_name.split(".")[-1] == "aac":
+    if path_input or file_name.split(".")[-1] in ['mp4', 'aac', 'mkv', 'avi', 'mov', 'webm', 'mpg']:
         if not path_input:
             path_input = f"temp/{file_name}"
             with open(path_input, "wb") as temp_file:
