@@ -25,12 +25,11 @@ async def process_help_command(message: Message):
     await message.answer(text=LEXICON['/help'])
 
 
-@router.message(F.voice | F.audio | F.document)
+@router.message(F.voice | F.audio | F.document | F.video)
 async def process_audio_to_text(message: Message, bot: Bot):
     try:
-        # if message.document:
 
-        file = message.voice or message.audio or message.document
+        file = message.voice or message.audio or message.document or message.video
 
         if message.voice:
             file_name = f"{message.voice.file_unique_id}.ogg"
@@ -38,13 +37,16 @@ async def process_audio_to_text(message: Message, bot: Bot):
             file_name = message.audio.file_name
         elif message.document and message.document.mime_type.split('/')[0] == 'audio':
             file_name = message.document.file_name
+        elif message.video \
+                and message.video.mime_type.split('/')[1] in ['mp4', 'aac', 'mkv', 'avi', 'mov', 'webm', 'mpg']:
+            file_name = "video." + message.video.mime_type.split('/')[1]
         else:
             return await message.reply(
-                text=f"This is not a sound file")
+                text=f"This is not a support file format")
 
         if file.file_size > 20.8e6:
             return await message.reply(
-                text=f"Sound file is too big. \nPlease use files less then 20Mb")
+                text=f"File is too big. \nPlease use files less then 20Mb")
 
         sound_bytes_io = await bot.download(file)
         sound_bytes = sound_bytes_io.read()
@@ -66,9 +68,7 @@ async def process_audio_to_text(message: Message, bot: Bot):
         await message.reply(text=f"{choice(LEXICON['wrong_decode'])}")
 
     except BaseException as e:
-        alert_message = await message.reply(text=f"{choice(LEXICON['another_wrong'])} \n{e}")
-        # await asyncio.sleep(60)
-        # await bot.delete_message(alert_message.chat.id, alert_message.message_id)
+        await message.reply(text=f"{choice(LEXICON['another_wrong'])} \n{e}")
 
 
 @router.callback_query(Text(text=['read_text_button_pressed']))
@@ -84,14 +84,6 @@ async def process_read_text_press(callback: CallbackQuery, bot: Bot):
         await callback.message.answer(text=chunk_text)
 
     await callback.answer()
-
-
-@router.message(F.video)
-async def this_is_video(message: Message, bot: Bot):
-    await message.reply(text=f"file video size: {message.video.file_size}")
-    # file = await bot.download(message.video)
-    # with open("tests/file.v", "wb") as f:
-    #     f.write(file.read())
 
 
 @router.message(F.text)
