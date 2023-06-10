@@ -4,8 +4,8 @@ from aiogram import Dispatcher, Bot
 from config_data.config import BOT_TOKEN, WEBHOOK_URL
 from handlers import user_handlers  # , other_handlers
 
-import logging
 from aiohttp import web
+import logging
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
@@ -39,13 +39,9 @@ async def handle_webhook(request):
     if token == BOT_TOKEN:
         request_data = await request.json()
         logger.warning(request_data)
-        # web.Response()
-        # web.Response()
-        # web.Response()
-
-        # await dp.feed_raw_update(bot, request_data)  # Main entry point for incoming updates with automatic Dict
 
         # Start processing in the background mode, not block main process
+        # Main entry point for incoming updates with automatic Dict
         asyncio.create_task(dp.feed_raw_update(bot, request_data))
 
         return web.Response()
@@ -65,4 +61,4 @@ if __name__ == '__main__':
         port=8080,
     )
 
-    logger.error('END BOT')
+    logger.warning('END BOT')
