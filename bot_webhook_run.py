@@ -49,6 +49,11 @@ async def handle_webhook(request):
         web.Response(status=403)
 
 
+async def handle_test_for_google(request):
+    return web.Response()
+
+
+app.router.add_get('/', handle_test_for_google)
 app.router.add_post(webhook_path, handle_webhook)  # Shortcut for add_route with method POST
 
 if __name__ == '__main__':
