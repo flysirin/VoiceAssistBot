@@ -4,8 +4,9 @@
 .mypy_cache/
 .vscode/
 venv
-__pycache__/
-.env
+
+__pycache__
+
 
 /tests
 
@@ -19,13 +20,16 @@ services/split_audio.py
 
 handlers/admin_handlers.py
 handlers/other_handlers.py
-handlers/private_user_handlers.py
-
 requirements.txt
 
 My_diary_Voice_Assist_bot.txt
-Container Registry Help.txt
+Container and Artifact Registry Help.txt
 
+bot_polling_run.py
+updates_example.py
 
+bot_and_http_server.sh
 
-
+README.md
+Dockerfile_openAI_lib
+Dockerfile_polling_http_sever
