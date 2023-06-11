@@ -1,5 +1,5 @@
 import subprocess
-from logging import debug, info
+import logging
 import json
 from services import convert_audio
 from config_data.config import OPENAI_API_KEY
@@ -9,10 +9,13 @@ from random import choice
 TRANSCRIPTIONS_URL = 'https://api.openai.com/v1/audio/transcriptions'
 CHAT_URL = 'https://api.openai.com/v1/chat/completions'
 
+logging.basicConfig(level=logging.WARNING)
+logger_ai_service = logging.getLogger(__name__)
+
 
 def transcribe_audio_to_text(file_bytes: bytes = None,
                              file_name: str = 'default_name.mp3') -> str:
-    debug('start')
+    logger_ai_service.warning('Send mp3 to OpenAI')
 
     result_text = ''
     path_save_txt = f"temp/{file_name.split('.')[0]}.txt"
@@ -30,7 +33,7 @@ def transcribe_audio_to_text(file_bytes: bytes = None,
             result_text = dict_res.get("text", choice(LEXICON["another_wrong"]))
 
         except BaseException as e:
-            info("Something wrong \n", e)
+            logger_ai_service.warning("Something wrong \n", "Exception: ", e)
 
     elif "error" in dict_res and "server_error" in dict_res["error"]["message"]:
         result_text = choice(LEXICON["server_error"])
@@ -38,7 +41,8 @@ def transcribe_audio_to_text(file_bytes: bytes = None,
     with open(path_save_txt, "w", encoding="utf-8") as f:
         f.write(result_text)
 
-    debug('finish')
+    logger_ai_service.warning('Successfully convert to text')
+
     return path_save_txt
 
 
@@ -48,7 +52,7 @@ def text_request_to_open_ai(text: str = "Say me something good!") -> str:
     text_answer = dict_answer.get("choices", [{}])[0].get("message", {}).get("content", '')
 
     if "error" in dict_answer:
-        info(dict_answer["error"]["message"])
+        logger_ai_service.warning(dict_answer["error"]["message"])
         text_answer = choice(LEXICON["another_wrong"])
 
     return text_answer
@@ -71,7 +75,7 @@ def curl_post_request_sound_transcribe(sound_bytes: bytes = None,
     if res.returncode == 0:
         return json.loads(res.stdout)
     else:
-        info(f"Error return code \n{res.returncode}")
+        logger_ai_service.warning(f"Error return code \n{res.returncode}")
         return {"error": {"message": "server_error"}}
 
 
