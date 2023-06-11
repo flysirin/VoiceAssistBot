@@ -10,6 +10,10 @@ from aiogram.types.input_file import FSInputFile
 from keyboards import keyboards
 
 from random import choice
+import logging
+
+logging.basicConfig(level=logging.WARNING)
+logger_user_hand = logging.getLogger(__name__)
 
 # Initialise router by module level
 router: Router = Router()
@@ -38,8 +42,8 @@ async def process_audio_to_text(message: Message, bot: Bot):
         elif message.document and message.document.mime_type.split('/')[0] == 'audio':
             file_name = message.document.file_name
         elif message.video \
-                and message.video.mime_type.split('/')[1] in ['mp4', 'aac', 'mkv', 'avi', 'mov', 'webm', 'mpg']:
-            file_name = "video." + message.video.mime_type.split('/')[1]
+                and message.video.mime_type.split('/')[1] in ['mp4', 'mkv', 'avi', 'mov', 'webm', 'mpg']:
+            file_name = "video." + message.video.mime_type.split('/')[-1]
         else:
             return await message.reply(
                 text=f"This is not a support file format")
@@ -54,7 +58,10 @@ async def process_audio_to_text(message: Message, bot: Bot):
             text=f"File downloaded successfully: \n{file_name}\n Text decoding in progress",
             disable_notification=True)
 
+        logger_user_hand.warning(f"File downloaded successfully.\nFile name: {file_name}")
+
         sound_bytes = convert_audio.convert_audio_to_mp3(file_bytes=sound_bytes, file_name=file_name)
+
         text_path = ai_service_curl.transcribe_audio_to_text(sound_bytes, file_name)
         send_doc = FSInputFile(text_path)
 
@@ -64,7 +71,9 @@ async def process_audio_to_text(message: Message, bot: Bot):
 
         other_services.delete_temp_files()
 
-    except subprocess.SubprocessError:
+    except subprocess.SubprocessError as ex:
+        logger_user_hand.warning(f"{ex}")
+        await message.reply(text=f"{ex}")
         await message.reply(text=f"{choice(LEXICON['wrong_decode'])}")
 
     except BaseException as e:
