@@ -44,7 +44,7 @@ async def handle_webhook(request):
         logger.warning(request_data)
 
         update_id = request_data.get('update_id', '')
-        if update_id in update_ids:  # Options for Google Cloud Run Services
+        if update_id in update_ids:  # Check repeated request with same update_id from telegram
             logger.warning(f'Repeated request came from Telegram: {update_id}')
             return web.Response()
 
