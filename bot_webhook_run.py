@@ -22,6 +22,9 @@ webhook_url = f'{WEBHOOK_URL}{webhook_path}'
 # Register routers in Dispatcher
 dp.include_router(user_handlers.router)
 
+# Options for Google Cloud Run Services
+update_ids = set()
+
 
 async def set_webhook():
     await bot.set_webhook(webhook_url, drop_pending_updates=True)
@@ -40,10 +43,21 @@ async def handle_webhook(request):
         request_data = await request.json()
         logger.warning(request_data)
 
-        # Start processing in the background mode, not block main process
-        # Main entry point for incoming updates with automatic Dict
-        asyncio.create_task(dp.feed_raw_update(bot, request_data))
+        update_id = request_data.get('update_id', '')
+        if update_id in update_ids:  # Options for Google Cloud Run Services
+            logger.warning(f'Repeated request came from Telegram: {update_id}')
+            return web.Response()
 
+        update_ids.add(update_id)
+        logger.warning(update_id)
+
+        # Option with start processing in the background mode, not block main process.
+        # asyncio.create_task(dp.feed_raw_update(bot, request_data))
+
+        # Main entry point for incoming updates with automatic Dict
+        await dp.feed_raw_update(bot, request_data)
+
+        logger.warning("Send response with status 200 to Telegram")
         return web.Response()
     else:
         web.Response(status=403)
