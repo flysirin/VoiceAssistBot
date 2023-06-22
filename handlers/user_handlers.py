@@ -73,7 +73,6 @@ async def process_audio_to_text(message: Message, bot: Bot):
 
     except subprocess.SubprocessError as ex:
         logger_user_hand.warning(f"{ex}")
-        await message.reply(text=f"{ex}")
         await message.reply(text=f"{choice(LEXICON['wrong_decode'])}")
 
     except BaseException as e:
