@@ -36,6 +36,7 @@ def transcribe_audio_to_text(file_bytes: bytes = None,
             logger_ai_service.warning("Something wrong \n", "Exception: ", e)
 
     elif "error" in dict_res and "server_error" in dict_res["error"]["message"]:
+        logger_ai_service.warning("Server OpenAi Error")
         result_text = choice(LEXICON["server_error"])
 
     with open(path_save_txt, "w", encoding="utf-8") as f:
