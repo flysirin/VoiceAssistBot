@@ -8,13 +8,15 @@ RUN pip3 install  --no-cache-dir environs==9.5.0
 
 COPY ./ /app
 
-#RUN chmod +x /app/bot_and_http_server.sh
-
 WORKDIR /app
 
-RUN chmod +x /app/services/ffmpeg_linux/ffmpeg
+# Use it, if your ffmpeg do not access for run
+#RUN chmod +x /app/services/ffmpeg_linux/ffmpeg
 
 EXPOSE 8080
 
-#CMD ["/app/bot_and_http_server.sh"]
+# This option for google cloud run services
 CMD ["sh",  "-c", "python3 bot_polling_run.py & python3 -m http.server 8080"]
+
+# Use it, if you do not need check port for alive container
+#CMD ["python3", "python3 bot_polling_run.py"]
