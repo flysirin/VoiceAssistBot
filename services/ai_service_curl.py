@@ -48,7 +48,7 @@ def transcribe_audio_to_text(file_bytes: bytes = None,
 
 
 def text_request_to_open_ai(text: str = "Say me something good!") -> str:
-    model = "gpt-3.5-turbo"
+    model = "gpt-3.5-turbo-16k"
     dict_answer = curl_post_text_request(text=text, model=model)
     text_answer = dict_answer.get("choices", [{}])[0].get("message", {}).get("content", '')
 
